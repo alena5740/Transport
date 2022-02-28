@@ -71,7 +71,6 @@ final class TransportInfoViewController: UIViewController {
     
     private func setupErrorMessage() {
         view.addSubview(errorMessage)
-        errorMessage.text = "Ошибка... Что-то пошло не так :("
         errorMessage.textColor = .red
         errorMessage.numberOfLines = 0
         errorMessage.isHidden = true
@@ -132,12 +131,13 @@ extension TransportInfoViewController: MapViewOutputProtocol {
     func updateView() {
         if let stopoverName = presenter?.stopoverModel.stopoverName {
             viewConfigure(stopoverName: stopoverName)
-            spinner.stopAnimating()
         }
+        spinner.isHidden = true
         transportCollectionView.reloadData()
     }
     
-    func showError() {
+    func showError(title: String) {
+        errorMessage.text = title
         errorMessage.isHidden = false
     }
 }

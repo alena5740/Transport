@@ -10,7 +10,7 @@ import Foundation
 // Протокол исходящих событий от View
 protocol MapViewOutputProtocol: AnyObject {
     func updateView()
-    func showError()
+    func showError(title: String)
 }
 
 // Протокол презентера экрана карты
@@ -41,6 +41,11 @@ final class MapPresenter: MapPresenterProtocol {
             switch result {
             case .success(let model):
                 let transportRoute = model.routePath
+                if transportRoute.isEmpty {
+                    self.delegatePresenter?.updateView()
+                    self.delegatePresenter?.showError(title: "Ошибка... Данные не пришли :(")
+                    return
+                }
                 for i in transportRoute {
                     let model = TransportModel(transportType: i.type,
                                                transportNumbers: i.number,
@@ -51,7 +56,7 @@ final class MapPresenter: MapPresenterProtocol {
             case .failure(_):
                 DispatchQueue.main.async {
                     self.delegatePresenter?.updateView()
-                    self.delegatePresenter?.showError()
+                    self.delegatePresenter?.showError(title: "Ошибка... Что-то пошло не так :(")
                 }
             }
         }
