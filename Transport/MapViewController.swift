@@ -22,7 +22,6 @@ final class MapViewController: UIViewController {
     override func viewDidLoad() {
         setupCoordinate()
         setupMapView()
-        presenter?.getTransportModel()
     }
     
     private func setupMapView() {

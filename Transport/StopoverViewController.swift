@@ -13,6 +13,8 @@ final class StopoverViewController: UIViewController {
     var presenter: StopoverPresenterProtocol?
     private var assembly: MapAssemblyProtocol?
     
+    private let spinner = UIActivityIndicatorView(style: .large)
+    
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -33,6 +35,7 @@ final class StopoverViewController: UIViewController {
         view.backgroundColor = .white
         setupNavigation()
         setupTableView()
+        showSpinner()
         presenter?.getData()
     }
     
@@ -62,6 +65,18 @@ final class StopoverViewController: UIViewController {
             tableView.trailingAnchor
                 .constraint(equalTo: view.trailingAnchor)
         ])
+    }
+    
+    private func showSpinner() {
+        view.addSubview(spinner)
+        
+        spinner.center = view.center
+        
+        spinner.backgroundColor = .white
+        spinner.color = .gray
+        
+        spinner.startAnimating()
+        spinner.hidesWhenStopped = true
     }
 }
 
@@ -104,6 +119,7 @@ extension StopoverViewController: UITableViewDelegate, UITableViewDataSource {
 extension StopoverViewController: StopoverViewOutputProtocol {
     func updateView() {
         tableView.reloadData()
+        spinner.stopAnimating()
     }
 }
 

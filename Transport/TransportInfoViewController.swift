@@ -14,7 +14,9 @@ final class TransportInfoViewController: UIViewController {
     
     private let stopoverIcon = UIImageView()
     private let stopoverName = UILabel()
-    
+    private let errorMessage = UILabel()
+    private let spinner = UIActivityIndicatorView(style: .large)
+
     private let transportCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -30,15 +32,18 @@ final class TransportInfoViewController: UIViewController {
     }()
     
     override func viewDidLoad() {
+        presenter?.getTransportModel()
         setupView()
         transportCollectionView.delegate = self
         transportCollectionView.dataSource = self
     }
     
     override func viewWillLayoutSubviews() {
+        showSpinner()
         setupStopoverIcon()
         setupStopoverName()
         setupTransportСollectionView()
+        setupErrorMessage()
     }
     
     private func setupView() {
@@ -64,6 +69,15 @@ final class TransportInfoViewController: UIViewController {
         stopoverName.frame = CGRect(x: 92, y: 16, width: view.frame.width - 108, height: 80)
     }
     
+    private func setupErrorMessage() {
+        view.addSubview(errorMessage)
+        errorMessage.text = "Ошибка... Что-то пошло не так :("
+        errorMessage.textColor = .red
+        errorMessage.numberOfLines = 0
+        errorMessage.isHidden = true
+        errorMessage.frame = CGRect(x: 16, y: 126, width: view.frame.width - 32, height: 80)
+    }
+    
     private func setupTransportСollectionView() {
         view.addSubview(transportCollectionView)
         transportCollectionView.frame = CGRect(x: 16, y: 126, width: view.frame.width - 32, height: 80)
@@ -76,6 +90,21 @@ final class TransportInfoViewController: UIViewController {
         } else {
             self.stopoverName.font = UIFont.boldSystemFont(ofSize: 21)
         }
+    }
+    
+    private func showSpinner() {
+        view.addSubview(spinner)
+
+        spinner.backgroundColor = .white
+        spinner.color = .gray
+        
+        spinner.startAnimating()
+        spinner.hidesWhenStopped = true
+        
+        spinner.frame = CGRect(x: CGFloat(0),
+                               y: CGFloat(16),
+                               width: self.view.bounds.width,
+                               height: 80)
     }
 }
 
@@ -103,7 +132,12 @@ extension TransportInfoViewController: MapViewOutputProtocol {
     func updateView() {
         if let stopoverName = presenter?.stopoverModel.stopoverName {
             viewConfigure(stopoverName: stopoverName)
+            spinner.stopAnimating()
         }
         transportCollectionView.reloadData()
+    }
+    
+    func showError() {
+        errorMessage.isHidden = false
     }
 }

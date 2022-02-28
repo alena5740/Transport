@@ -10,6 +10,7 @@ import Foundation
 // Протокол исходящих событий от View
 protocol MapViewOutputProtocol: AnyObject {
     func updateView()
+    func showError()
 }
 
 // Протокол презентера экрана карты
@@ -26,7 +27,7 @@ final class MapPresenter: MapPresenterProtocol {
     var stopoverModel: UserLastChoiceModel
     var transportModelArray: [TransportModel] = []
     
-    weak var delegatPresenter: MapViewOutputProtocol?
+    weak var delegatePresenter: MapViewOutputProtocol?
     
     init(stopoverModel: UserLastChoiceModel, loadService: LoadServiceProtocol) {
         self.loadService = loadService
@@ -46,9 +47,12 @@ final class MapPresenter: MapPresenterProtocol {
                                                timeArrival: i.timeArrival.first)
                     self.transportModelArray.append(model)
                 }
-                self.delegatPresenter?.updateView()
+                self.delegatePresenter?.updateView()
             case .failure(_):
-                print("Ошибка получения данных")
+                DispatchQueue.main.async {
+                    self.delegatePresenter?.updateView()
+                    self.delegatePresenter?.showError()
+                }
             }
         }
     }

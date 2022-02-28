@@ -22,7 +22,7 @@ final class MapAssembly: MapAssemblyProtocol {
         
         mapViewController.presenter = presenter
         transportInfoViewController.presenter = presenter
-        presenter.delegatPresenter = transportInfoViewController
+        presenter.delegatePresenter = transportInfoViewController
         
         let viewController = ContainerViewController(
             contentViewController: mapViewController,
